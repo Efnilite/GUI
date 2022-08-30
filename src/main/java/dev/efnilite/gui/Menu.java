@@ -1,12 +1,13 @@
 package dev.efnilite.gui;
 
 import dev.efnilite.gui.animation.MenuAnimation;
-import dev.efnilite.gui.util.event.EventWatcher;
 import dev.efnilite.gui.item.Item;
 import dev.efnilite.gui.item.MenuItem;
 import dev.efnilite.gui.util.Numbers;
 import dev.efnilite.gui.util.Task;
+import dev.efnilite.gui.util.event.EventWatcher;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -246,7 +247,7 @@ public class Menu implements EventWatcher {
 
         // Filler
         if (filler != null) { // fill the background with the same material
-            Item fillerItem = new Item(filler, "<red> ");
+            Item fillerItem = new Item(filler, MiniMessage.miniMessage().deserialize("<red> "));
             for (int slot = 0; slot < rows * 9; slot++) {
                 if (items.get(slot) != null) { // ignore already-set items
                     continue;

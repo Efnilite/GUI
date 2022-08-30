@@ -103,7 +103,7 @@ public class AutoSliderItem extends MenuItem {
     @Override
     public ItemStack build() {
         if (items.keySet().size() == 0) {
-            throw new IllegalArgumentException("Items size is <0 or 0!");
+            throw new IllegalArgumentException("Items size is 0!");
         }
 
         Item init = items.get(current);
@@ -116,7 +116,8 @@ public class AutoSliderItem extends MenuItem {
                 @Override
                 public void run() {
                     InventoryView view = menu.getPlayer().getOpenInventory();
-                    if (view.getTitle().equals(menu.getTitle())) {
+
+                    if (view.title().equals(menu.getTitle())) {
                         view.getTopInventory().setItem(slot, getNextItem().build());
                     } else {
                         cancel(); // prevent going on forever

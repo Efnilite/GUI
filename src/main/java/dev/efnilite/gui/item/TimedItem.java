@@ -3,6 +3,7 @@ package dev.efnilite.gui.item;
 import dev.efnilite.gui.Menu;
 import dev.efnilite.gui.MenuClickEvent;
 import dev.efnilite.gui.util.Task;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -28,7 +29,7 @@ public class TimedItem extends MenuItem {
         this.item = item;
         this.revertTo = event.menu().getItem(event.slot());
         if (revertTo == null) {
-            revertTo = new Item(Material.AIR, "<red> ");
+            revertTo = new Item(Material.AIR, MiniMessage.miniMessage().deserialize("<red> "));
         }
         this.player = event.getPlayer();
         this.event = event;
@@ -54,7 +55,7 @@ public class TimedItem extends MenuItem {
             public void run() {
                 Menu menu = event.menu();
                 InventoryView view = player.getOpenInventory();
-                if (view.getTitle().equals(menu.getTitle())) {
+                if (view.title().equals(menu.getTitle())) {
                     menu.item(event.slot(), revertTo);
                     menu.updateItem(event.slot());
                 } else {

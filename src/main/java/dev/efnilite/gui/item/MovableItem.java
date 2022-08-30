@@ -1,5 +1,6 @@
 package dev.efnilite.gui.item;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
 
 /**
@@ -9,11 +10,11 @@ import org.bukkit.Material;
  */
 public class MovableItem extends Item {
 
-    public MovableItem(Material material, String name) {
+    public MovableItem(Material material, Component name) {
         super(material, name);
     }
 
-    public MovableItem(Material material, int amount, String name) {
+    public MovableItem(Material material, int amount, Component name) {
         super(material, amount, name);
     }
 

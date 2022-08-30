@@ -1,7 +1,7 @@
 package dev.efnilite.gui.item;
 
-import dev.efnilite.gui.util.Strings;
 import dev.efnilite.gui.util.Version;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -29,10 +29,10 @@ public class Item extends MenuItem {
     private int durability;
     private boolean glowing;
     private boolean unbreakable;
-    private String name;
+    private Component name;
     private ItemMeta meta;
     private Material material;
-    private List<String> lore;
+    private List<Component> lore;
 
     /**
      * Creates a new instance
@@ -43,7 +43,7 @@ public class Item extends MenuItem {
      * @param   name
      *          The name of the item
      */
-    public Item(Material material, String name) {
+    public Item(Material material, Component name) {
         this(material, 1, name);
     }
 
@@ -59,7 +59,7 @@ public class Item extends MenuItem {
      * @param   name
      *          The name of the item
      */
-    public Item(Material material, int amount, String name) {
+    public Item(Material material, int amount, Component name) {
         this.amount = amount;
 
         if (material != null) {
@@ -89,8 +89,8 @@ public class Item extends MenuItem {
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
-        meta.setDisplayName(Strings.colour(name));
-        meta.setLore(Strings.colour(lore));
+        meta.displayName(name);
+        meta.lore(lore);
 
         if (Version.isHigherOrEqual(Version.V1_13)) {
             ((Damageable) meta).setDamage(Math.abs(durability - material.getMaxDurability()));
@@ -160,7 +160,7 @@ public class Item extends MenuItem {
      *
      * @return  the instance this class
      */
-    public Item name(String name) {
+    public Item name(Component name) {
         this.name = name;
         return this;
     }
@@ -223,7 +223,7 @@ public class Item extends MenuItem {
      *
      * @return  the instance this class
      */
-    public Item lore(@Nullable List<String> lore) {
+    public Item lore(@Nullable List<Component> lore) {
         if (lore == null || lore.isEmpty()) {
             return this;
         }
@@ -241,7 +241,7 @@ public class Item extends MenuItem {
      *
      * @return the instance this class
      */
-    public Item lore(String... lore) {
+    public Item lore(Component... lore) {
         return lore(Arrays.asList(lore));
     }
 
@@ -254,7 +254,7 @@ public class Item extends MenuItem {
      *
      * @return the instance of this class
      */
-    public Item modifyLore(Function<String, String> function) {
+    public Item modifyLore(Function<Component, Component> function) {
         this.lore = lore.stream().map(function).collect(Collectors.toList());
         return this;
     }
@@ -268,7 +268,7 @@ public class Item extends MenuItem {
      *
      * @return the instance of this class
      */
-    public Item modifyName(Function<String, String> function) {
+    public Item modifyName(Function<Component, Component> function) {
         name = function.apply(name);
         return this;
     }
@@ -287,7 +287,7 @@ public class Item extends MenuItem {
      *
      * @return the lore
      */
-    public List<String> getLore() {
+    public List<Component> getLore() {
         return lore;
     }
 
@@ -305,7 +305,7 @@ public class Item extends MenuItem {
      *
      * @return the name
      */
-    public String getName() {
+    public Component getName() {
         return name;
     }
 }

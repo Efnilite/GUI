@@ -4,6 +4,7 @@ import dev.efnilite.gui.item.Item;
 import dev.efnilite.gui.item.MenuItem;
 import dev.efnilite.gui.util.Numbers;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class PagedMenu extends Menu {
         }
 
         List<MenuItem> values = new ArrayList<>(assigned.get(newPage));
-        Item missingFiller = new Item(filler, "<red> ");
+        Item missingFiller = new Item(filler, MiniMessage.miniMessage().deserialize("<red> "));
 
         items.remove(prevPageSlot);
         items.remove(nextPageSlot);

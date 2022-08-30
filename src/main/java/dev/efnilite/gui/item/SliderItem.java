@@ -102,8 +102,8 @@ public class SliderItem extends MenuItem {
 
     @Override
     public ItemStack build() {
-        if (items.keySet().size() <= 0) {
-            throw new IllegalArgumentException("Items size is <0 or 0!");
+        if (items.keySet().size() == 0) {
+            throw new IllegalArgumentException("Items size is 0!");
         }
 
         Item init = items.get(current);
