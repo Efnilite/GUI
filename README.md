@@ -1,7 +1,9 @@
 ## GUI / by Efy
+[![](https://jitpack.io/v/Efnilite/GUI.svg)](https://jitpack.io/#Efnilite/GUI)
 
 **Import with Maven**
 
+Click the jitpack icon to view the latest compiled version.
 ```maven
 <repository>
     <id>jitpack.io</id>
@@ -12,8 +14,16 @@
 <dependency>
     <groupId>com.github.Efnilite</groupId>
     <artifactId>GUI</artifactId>
-    <version>master-aa71371c6f-1</version>
+    <version>version</version>
 </dependency>
+```
+
+**Setup**
+
+Before you can activate or create a menu, you have to set the plugin instance this library will use. It's recommended to do this in one of the first lines of your `#onEnable()` or `#onLoad()` method.
+
+```java
+Menu.init(plugin);
 ```
 
 **Examples**
