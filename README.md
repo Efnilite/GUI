@@ -1,4 +1,5 @@
 ## GUI / by Efy
+[![](https://jitpack.io/v/Efnilite/GUI.svg)](https://jitpack.io/#Efnilite/GUI)
 
 **Import with Maven**
 
