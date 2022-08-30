@@ -18,6 +18,14 @@ Click the jitpack icon to view the latest compiled version.
 </dependency>
 ```
 
+**Setup**
+
+Before you can activate or create a menu, you have to set the plugin instance this library will use. It's recommended to do this in one of the first lines of your `#onEnable()` or `#onLoad()` method.
+
+```java
+Menu.init(plugin);
+```
+
 **Examples**
 
 Generic menu
