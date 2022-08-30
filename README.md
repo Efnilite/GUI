@@ -36,7 +36,7 @@ new Menu(3, "Blocks")
 ```
 
 Paged menu
-```ja
+```java
 PagedMenu menu = new PagedMenu(3, "Blocks")
     .displayRows(0, 1) // set the first two rows to display the provided items
     .addToDisplay(List.of(new Item(Material.GRASS, "Grass"), new Item(Material.STONE, "Stone"))); // add items to the display
