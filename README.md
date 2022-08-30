@@ -3,6 +3,7 @@
 
 **Import with Maven**
 
+Click the jitpack icon to view the latest compiled version.
 ```maven
 <repository>
     <id>jitpack.io</id>
@@ -13,7 +14,7 @@
 <dependency>
     <groupId>com.github.Efnilite</groupId>
     <artifactId>GUI</artifactId>
-    <version>master-aa71371c6f-1</version>
+    <version>version</version>
 </dependency>
 ```
 
