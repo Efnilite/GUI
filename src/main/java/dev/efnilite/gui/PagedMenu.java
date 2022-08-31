@@ -215,4 +215,12 @@ public class PagedMenu extends Menu {
     public List<MenuItem> getTotalToDisplay() {
         return totalToDisplay;
     }
+
+    /**
+     * Returns the current page
+     * @return the current page
+     */
+    public int getCurrent() {
+        return current;
+    }
 }

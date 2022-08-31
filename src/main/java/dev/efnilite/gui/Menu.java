@@ -39,8 +39,12 @@ public class Menu implements EventWatcher {
     protected Player player;
     protected Material filler = null;
     protected MenuAnimation animation = null;
+
+    // Title
+    protected Component titleComponent;
+    protected String titleString;
+
     protected final int rows;
-    protected final Component title;
     protected final Map<Integer, MenuItem> items = new HashMap<>();
     protected final List<Integer> evenlyDistributedRows = new ArrayList<>();
 
@@ -69,6 +73,14 @@ public class Menu implements EventWatcher {
                 .run();
     }
 
+    Menu(int rows) {
+        if (rows < 1 || rows > 6) {
+            throw new IllegalArgumentException("Rows is below 1 or above 6");
+        }
+        this.rows = rows;
+        this.inventoryId = UUID.randomUUID();
+    }
+
     /**
      * Constructor for a new menu.
      *
@@ -76,15 +88,27 @@ public class Menu implements EventWatcher {
      *          The amount of rows. Range starts at 1 and ends at 6.
      *
      * @param   title
-     *          The title of this menu.
+     *          The title of this menu as a {@link Component}.
      */
     public Menu(int rows, Component title) {
-        if (rows < 1 || rows > 6) {
-            throw new IllegalArgumentException("Rows is below 1 or above 6");
-        }
-        this.rows = rows;
-        this.title = title;
-        this.inventoryId = UUID.randomUUID();
+        this(rows);
+
+        this.titleComponent = title;
+    }
+
+    /**
+     * Constructor for a new menu.
+     *
+     * @param   rows
+     *          The amount of rows. Range starts at 1 and ends at 6.
+     *
+     * @param   title
+     *          The title of this menu as a {@link String}.
+     */
+    public Menu(int rows, String title) {
+        this(rows);
+
+        this.titleString = title;
     }
 
     /**
@@ -205,7 +229,8 @@ public class Menu implements EventWatcher {
      */
     public void open(Player player) {
         this.player = player;
-        Inventory inventory = Bukkit.createInventory(null, rows * 9, title);
+        Inventory inventory = Bukkit.createInventory(null, rows * 9,
+                titleComponent == null ? MiniMessage.miniMessage().deserialize(titleString) : titleComponent);
 
         // Evenly distributed rows
         for (int row : evenlyDistributedRows) {
@@ -344,7 +369,17 @@ public class Menu implements EventWatcher {
     }
 
     public Component getTitle() {
-        return title;
+        return titleComponent == null ? MiniMessage.miniMessage().deserialize(titleString) : titleComponent;
+    }
+
+    @Nullable
+    public Component getTitleAsComponent() {
+        return titleComponent;
+    }
+
+    @Nullable
+    public String getTitleAsString() {
+        return titleString;
     }
 
     private List<Integer> getEvenlyDistributedSlots(int amountInRow) {

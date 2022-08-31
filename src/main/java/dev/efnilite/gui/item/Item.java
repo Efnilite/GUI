@@ -2,6 +2,7 @@ package dev.efnilite.gui.item;
 
 import dev.efnilite.gui.util.Version;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -11,11 +12,9 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * A class for creating items.
@@ -29,37 +28,15 @@ public class Item extends MenuItem {
     private int durability;
     private boolean glowing;
     private boolean unbreakable;
-    private Component name;
+    private Component nameComponent;
+    private String nameString;
     private ItemMeta meta;
     private Material material;
-    private List<Component> lore;
 
-    /**
-     * Creates a new instance
-     *
-     * @param   material
-     *          The material
-     *
-     * @param   name
-     *          The name of the item
-     */
-    public Item(Material material, Component name) {
-        this(material, 1, name);
-    }
+    private List<Component> loreComponent;
+    private List<String> loreString;
 
-    /**
-     * Creates a new instance
-     *
-     * @param   material
-     *          The material
-     *
-     * @param   amount
-     *          The amount of the item
-     *
-     * @param   name
-     *          The name of the item
-     */
-    public Item(Material material, int amount, Component name) {
+    Item(Material material, int amount) {
         this.amount = amount;
 
         if (material != null) {
@@ -67,16 +44,38 @@ public class Item extends MenuItem {
         } else {
             material = Material.GRASS_BLOCK;
         }
-
-        this.name = name;
-        this.lore = new ArrayList<>();
         this.material = material;
         this.unbreakable = false;
+    }
+
+    public Item(Material material, int amount, String name) {
+        this(material, amount);
+
+        this.nameString = name;
+    }
+
+    public Item(Material material, int amount, Component name) {
+        this(material, amount);
+
+        this.nameComponent = name;
+    }
+
+    public Item(Material material, String name) {
+        this(material, 1);
+
+        this.nameString = name;
+    }
+
+    public Item(Material material, Component name) {
+        this(material, 1);
+
+        this.nameComponent = name;
     }
 
     @Override
     public ItemStack build() {
         ItemStack item = new ItemStack(material, amount);
+
         if (meta == null) {
             meta = Bukkit.getItemFactory().getItemMeta(item.getType());
         }
@@ -89,8 +88,10 @@ public class Item extends MenuItem {
             meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         }
 
-        meta.displayName(name);
-        meta.lore(lore);
+        meta.displayName(nameComponent == null ? MiniMessage.miniMessage().deserialize(nameString) : nameComponent);
+        meta.lore(loreComponent == null ? loreString.stream()
+                .map(s -> MiniMessage.miniMessage().deserialize(s))
+                .toList() : loreComponent);
 
         if (Version.isHigherOrEqual(Version.V1_13)) {
             ((Damageable) meta).setDamage(Math.abs(durability - material.getMaxDurability()));
@@ -104,13 +105,19 @@ public class Item extends MenuItem {
     @SuppressWarnings("all")
     @Override
     public Item clone() {
-        Item item = new Item(material, amount, name);
+        Item item;
+        if (nameComponent != null) {
+            item = new Item(material, amount, nameComponent);
+        } else {
+            item = new Item(material, amount, nameString);
+        }
 
         item.glowing = glowing;
         item.durability = durability;
         item.unbreakable = unbreakable;
         item.meta = meta;
-        item.lore = lore;
+        item.loreComponent = loreComponent;
+        item.loreString = loreString;
 
         return item;
     }
@@ -161,7 +168,20 @@ public class Item extends MenuItem {
      * @return  the instance this class
      */
     public Item name(Component name) {
-        this.name = name;
+        this.nameComponent = name;
+        return this;
+    }
+
+    /**
+     * Sets the name
+     *
+     * @param   name
+     *          The name
+     *
+     * @return  the instance this class
+     */
+    public Item name(String name) {
+        this.nameString = name;
         return this;
     }
 
@@ -187,7 +207,6 @@ public class Item extends MenuItem {
         this.durability = durability;
         return this;
     }
-
 
     /**
      * Sets the item amount
@@ -228,8 +247,8 @@ public class Item extends MenuItem {
             return this;
         }
 
-        this.lore.clear();
-        this.lore.addAll(lore);
+        this.loreComponent.clear();
+        this.loreComponent.addAll(lore);
         return this;
     }
 
@@ -255,7 +274,51 @@ public class Item extends MenuItem {
      * @return the instance of this class
      */
     public Item modifyLore(Function<Component, Component> function) {
-        this.lore = lore.stream().map(function).collect(Collectors.toList());
+        this.loreComponent = loreComponent.stream().map(function).toList();
+        return this;
+    }
+
+    /**
+     * Sets the lore
+     *
+     * @param   lore
+     *          The lore
+     *
+     * @return  the instance this class
+     */
+    public Item loreString(@Nullable List<String> lore) {
+        if (lore == null || lore.isEmpty()) {
+            return this;
+        }
+
+        this.loreString.clear();
+        this.loreString.addAll(lore);
+        return this;
+    }
+
+    /**
+     * Sets the lore
+     *
+     * @param   lore
+     *          The lore
+     *
+     * @return the instance this class
+     */
+    public Item lore(String... lore) {
+        return loreString(Arrays.asList(lore));
+    }
+
+    /**
+     * Modifies the lore line by line.
+     * Useful for updating items.
+     *
+     * @param   function
+     *          The function. The line of lore is given, and it must return the modified version of that lore line
+     *
+     * @return the instance of this class
+     */
+    public Item modifyStringLore(Function<String, String> function) {
+        this.loreString = loreString.stream().map(function).toList();
         return this;
     }
 
@@ -269,7 +332,21 @@ public class Item extends MenuItem {
      * @return the instance of this class
      */
     public Item modifyName(Function<Component, Component> function) {
-        name = function.apply(name);
+        nameComponent = function.apply(nameComponent);
+        return this;
+    }
+
+    /**
+     * Modifies the name of an item.
+     * Useful for updating items.
+     *
+     * @param   function
+     *          The function. The title is given, and it must return an altered version of this title.
+     *
+     * @return the instance of this class
+     */
+    public Item modifyStringName(Function<String, String> function) {
+        nameString = function.apply(nameString);
         return this;
     }
 
@@ -288,7 +365,11 @@ public class Item extends MenuItem {
      * @return the lore
      */
     public List<Component> getLore() {
-        return lore;
+        return loreComponent == null ?
+                loreString.stream()
+                        .map(s -> MiniMessage.miniMessage().deserialize(s))
+                        .toList()
+                : loreComponent;
     }
 
     /**
@@ -306,6 +387,26 @@ public class Item extends MenuItem {
      * @return the name
      */
     public Component getName() {
-        return name;
+        return nameComponent == null ? MiniMessage.miniMessage().deserialize(nameString) : nameComponent;
+    }
+
+    /**
+     * Returns the name as a {@link Component}.
+     *
+     * @return the name as a {@link Component}.
+     */
+    @Nullable
+    public Component getNameAsComponent() {
+        return nameComponent;
+    }
+
+    /**
+     * Returns the name as a {@link String}.
+     *
+     * @return the name as a {@link String}.
+     */
+    @Nullable
+    public String getNameAsString() {
+        return nameString;
     }
 }
